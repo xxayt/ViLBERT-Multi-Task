@@ -13,6 +13,8 @@ import tarfile
 import tempfile
 import sys
 from io import open
+from vilbert import BERT_PRETRAINED_MODEL_ARCHIVE_MAP, ACT2FN, load_tf_weights_in_bert, GeLU
+from vilbert.basebert import BertLayerNorm, BertIntermediate, BertLMPredictionHead, BertOutput, BertSelfOutput
 
 import torch
 from torch import nn
@@ -104,7 +106,7 @@ class BertConfig(object):
 
         if isinstance(vocab_size_or_config_json_file, str) or (
             sys.version_info[0] == 2
-            and isinstance(vocab_size_or_config_json_file, unicode)
+            and isinstance(vocab_size_or_config_json_file, str)
         ):
             with open(vocab_size_or_config_json_file, "r", encoding="utf-8") as reader:
                 json_config = json.loads(reader.read())
@@ -473,7 +475,7 @@ class BertImageIntermediate(nn.Module):
         super(BertImageIntermediate, self).__init__()
         self.dense = nn.Linear(config.v_hidden_size, config.v_intermediate_size)
         if isinstance(config.v_hidden_act, str) or (
-            sys.version_info[0] == 2 and isinstance(config.v_hidden_act, unicode)
+            sys.version_info[0] == 2 and isinstance(config.v_hidden_act, str)
         ):
             self.intermediate_act_fn = ACT2FN[config.v_hidden_act]
         else:
@@ -963,7 +965,7 @@ class BertImgPredictionHeadTransform(nn.Module):
         super(BertImgPredictionHeadTransform, self).__init__()
         self.dense = nn.Linear(config.v_hidden_size, config.v_hidden_size)
         if isinstance(config.hidden_act, str) or (
-            sys.version_info[0] == 2 and isinstance(config.hidden_act, unicode)
+            sys.version_info[0] == 2 and isinstance(config.hidden_act, str)
         ):
             self.transform_act_fn = ACT2FN[config.hidden_act]
         else:

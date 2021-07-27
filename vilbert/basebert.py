@@ -15,6 +15,7 @@ import tarfile
 import tempfile
 import sys
 from io import open
+from vilbert import PRETRAINED_MODEL_ARCHIVE_MAP, ACT2FN, load_tf_weights_in_bert
 
 import torch
 from torch import nn
@@ -536,7 +537,7 @@ class BertPredictionHeadTransform(nn.Module):
         super(BertPredictionHeadTransform, self).__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         if isinstance(config.hidden_act, str) or (
-            sys.version_info[0] == 2 and isinstance(config.hidden_act, unicode)
+            sys.version_info[0] == 2 and isinstance(config.hidden_act, str)
         ):
             self.transform_act_fn = ACT2FN[config.hidden_act]
         else:
@@ -840,7 +841,7 @@ class BertForMultiModalPreTraining(BertPreTrainedModel):
 
             return masked_lm_loss, masked_img_loss, next_sentence_loss
         else:
-            return prediction_scores, seq_relationship_score, prediction_scores_v
+            return prediction_scores_t, seq_relationship_score, prediction_scores_v
 
 
 class BaseBertForVLTasks(BertPreTrainedModel):
