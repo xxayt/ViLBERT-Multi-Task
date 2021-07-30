@@ -42,7 +42,7 @@ except ImportError:
         def __init__(self, hidden_size, eps=1e-12):
             """Construct a layernorm module in the TF style (epsilon inside the square root).
             """
-            super(BertLayerNorm, self).__init__()
+            super().__init__()
             self.weight = nn.Parameter(torch.ones(hidden_size))
             self.bias = nn.Parameter(torch.zeros(hidden_size))
             self.variance_epsilon = eps
@@ -60,7 +60,7 @@ class BertPreTrainedModel(nn.Module):
     """
 
     def __init__(self, config, *inputs, **kwargs):
-        super(BertPreTrainedModel, self).__init__()
+        super().__init__()
 
         if not isinstance(config, BertConfig):
             raise ValueError(
@@ -258,7 +258,7 @@ class BertEmbeddings(nn.Module):
     """
 
     def __init__(self, config):
-        super(BertEmbeddings, self).__init__()
+        super().__init__()
         self.word_embeddings = nn.Embedding(
             config.vocab_size, config.hidden_size, padding_idx=0
         )
@@ -298,7 +298,7 @@ class BertImageEmbeddings(nn.Module):
     """
 
     def __init__(self, config):
-        super(BertImageEmbeddings, self).__init__()
+        super().__init__()
         self.image_embeddings = nn.Linear(2048, config.hidden_size)
         # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size, padding_idx=0)
         self.token_type_embeddings = nn.Embedding(
@@ -333,7 +333,7 @@ class BertImageEmbeddings(nn.Module):
 
 class BertSelfAttention(nn.Module):
     def __init__(self, config):
-        super(BertSelfAttention, self).__init__()
+        super().__init__()
         if config.hidden_size % config.num_attention_heads != 0:
             raise ValueError(
                 "The hidden size (%d) is not a multiple of the number of attention "
@@ -388,7 +388,7 @@ class BertSelfAttention(nn.Module):
 
 class BertSelfOutput(nn.Module):
     def __init__(self, config):
-        super(BertSelfOutput, self).__init__()
+        super().__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
@@ -402,7 +402,7 @@ class BertSelfOutput(nn.Module):
 
 class BertAttention(nn.Module):
     def __init__(self, config):
-        super(BertAttention, self).__init__()
+        super().__init__()
         self.self = BertSelfAttention(config)
         self.output = BertSelfOutput(config)
 
@@ -414,7 +414,7 @@ class BertAttention(nn.Module):
 
 class BertIntermediate(nn.Module):
     def __init__(self, config):
-        super(BertIntermediate, self).__init__()
+        super().__init__()
         self.dense = nn.Linear(config.hidden_size, config.intermediate_size)
         if isinstance(config.hidden_act, str) or (
             sys.version_info[0] == 2 and isinstance(config.hidden_act, str)
@@ -431,7 +431,7 @@ class BertIntermediate(nn.Module):
 
 class BertOutput(nn.Module):
     def __init__(self, config):
-        super(BertOutput, self).__init__()
+        super().__init__()
         self.dense = nn.Linear(config.intermediate_size, config.hidden_size)
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
@@ -445,7 +445,7 @@ class BertOutput(nn.Module):
 
 class BertLayer(nn.Module):
     def __init__(self, config):
-        super(BertLayer, self).__init__()
+        super().__init__()
         self.attention = BertAttention(config)
         self.intermediate = BertIntermediate(config)
         self.output = BertOutput(config)
@@ -459,7 +459,7 @@ class BertLayer(nn.Module):
 
 class BertEncoder(nn.Module):
     def __init__(self, config):
-        super(BertEncoder, self).__init__()
+        super().__init__()
         layer = BertLayer(config)
         self.layer = nn.ModuleList(
             [copy.deepcopy(layer) for _ in range(config.num_hidden_layers)]
@@ -478,7 +478,7 @@ class BertEncoder(nn.Module):
 
 class BertPooler(nn.Module):
     def __init__(self, config):
-        super(BertPooler, self).__init__()
+        super().__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         self.activation = nn.Tanh()
 
@@ -493,7 +493,7 @@ class BertPooler(nn.Module):
 
 class BertLMPredictionHead(nn.Module):
     def __init__(self, config, bert_model_embedding_weights):
-        super(BertLMPredictionHead, self).__init__()
+        super().__init__()
         self.transform = BertPredictionHeadTransform(config)
 
         # The output weights are the same as the input embeddings, but there is
@@ -514,7 +514,7 @@ class BertLMPredictionHead(nn.Module):
 
 class BertOnlyMLMHead(nn.Module):
     def __init__(self, config, bert_model_embedding_weights):
-        super(BertOnlyMLMHead, self).__init__()
+        super().__init__()
         self.predictions = BertLMPredictionHead(config, bert_model_embedding_weights)
 
     def forward(self, sequence_output):
@@ -524,7 +524,7 @@ class BertOnlyMLMHead(nn.Module):
 
 class BertOnlyNSPHead(nn.Module):
     def __init__(self, config):
-        super(BertOnlyNSPHead, self).__init__()
+        super().__init__()
         self.seq_relationship = nn.Linear(config.hidden_size, 2)
 
     def forward(self, pooled_output):
@@ -534,7 +534,7 @@ class BertOnlyNSPHead(nn.Module):
 
 class BertPredictionHeadTransform(nn.Module):
     def __init__(self, config):
-        super(BertPredictionHeadTransform, self).__init__()
+        super().__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         if isinstance(config.hidden_act, str) or (
             sys.version_info[0] == 2 and isinstance(config.hidden_act, str)
@@ -553,7 +553,7 @@ class BertPredictionHeadTransform(nn.Module):
 
 class BertLMPredictionHead(nn.Module):
     def __init__(self, config, bert_model_embedding_weights):
-        super(BertLMPredictionHead, self).__init__()
+        super().__init__()
         self.transform = BertPredictionHeadTransform(config)
 
         # The output weights are the same as the input embeddings, but there is
@@ -574,7 +574,7 @@ class BertLMPredictionHead(nn.Module):
 
 class BertImagePredictionHead(nn.Module):
     def __init__(self, config, bert_model_embedding_weights):
-        super(BertImagePredictionHead, self).__init__()
+        super().__init__()
         self.transform = BertPredictionHeadTransform(config)
 
         # The output weights are the same as the input embeddings, but there is
@@ -590,7 +590,7 @@ class BertImagePredictionHead(nn.Module):
 
 class BertPreTrainingHeads(nn.Module):
     def __init__(self, config, bert_model_embedding_weights):
-        super(BertPreTrainingHeads, self).__init__()
+        super().__init__()
         self.predictions = BertLMPredictionHead(config, bert_model_embedding_weights)
         self.seq_relationship = nn.Linear(config.hidden_size, 2)
         self.imagePredictions = BertImagePredictionHead(
@@ -650,7 +650,7 @@ class BertModel(BertPreTrainedModel):
     """
 
     def __init__(self, config):
-        super(BertModel, self).__init__(config)
+        super().__init__(config)
         self.image_embeddings = BertImageEmbeddings(config)
         self.embeddings = BertEmbeddings(config)
         self.encoder = BertEncoder(config)
@@ -780,7 +780,7 @@ class BertForMultiModalPreTraining(BertPreTrainedModel):
     """
 
     def __init__(self, config):
-        super(BertForMultiModalPreTraining, self).__init__(config)
+        super().__init__(config)
         self.bert = BertModel(config)
         self.cls = BertPreTrainingHeads(
             config, self.bert.embeddings.word_embeddings.weight
@@ -846,7 +846,7 @@ class BertForMultiModalPreTraining(BertPreTrainedModel):
 
 class BaseBertForVLTasks(BertPreTrainedModel):
     def __init__(self, config, num_labels, dropout_prob=0.1, default_gpu=True):
-        super(BaseBertForVLTasks, self).__init__(config)
+        super().__init__(config)
         self.num_labels = num_labels
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(dropout_prob)
@@ -918,7 +918,7 @@ class BaseBertForVLTasks(BertPreTrainedModel):
 
 class SimpleClassifier(nn.Module):
     def __init__(self, in_dim, hid_dim, out_dim, dropout):
-        super(SimpleClassifier, self).__init__()
+        super().__init__()
         layers = [
             weight_norm(nn.Linear(in_dim, hid_dim), dim=None),
             nn.ReLU(),
