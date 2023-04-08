@@ -61,6 +61,7 @@ Download the data for different datasets to the `data` directory. Here are the l
 ```text
 cd data
 wget https://dl.fbaipublicfiles.com/vilbert-multi-task/datasets.tar.gz
+aria2c https://dl.fbaipublicfiles.com/vilbert-multi-task/datasets.tar.gz
 tar xf datasets.tar.gz
 ```
 
